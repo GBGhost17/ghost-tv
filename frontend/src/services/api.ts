@@ -87,19 +87,25 @@ export const fetchMovies = async (page: number = 1) => {
     return responseCache[cacheKey];
   }
 
-  try {
-    const response = await internalApi.get(`/movies?page=${page}`);
-    responseCache[cacheKey] = response.data;
-    return response.data;
-  } catch (err) {
-    console.error('Lỗi gọi internalApi /movies:', err);
+  const isCustomBackend = INTERNAL_API_URL && INTERNAL_API_URL !== CONTENT_API_URL && !INTERNAL_API_URL.includes('localhost');
+
+  if (isCustomBackend) {
     try {
-      const directRes = await contentApi.get(`/films/danh-sach/phim-moi-cap-nhat?page=${page}`);
-      responseCache[cacheKey] = directRes.data;
-      return directRes.data;
-    } catch {
-      return { items: [] };
+      const response = await internalApi.get(`/movies?page=${page}`);
+      responseCache[cacheKey] = response.data;
+      return response.data;
+    } catch (err) {
+      console.warn('Lỗi gọi internalApi /movies, fallback sang contentApi:', err);
     }
+  }
+
+  try {
+    const directRes = await contentApi.get(`/films/phim-moi-cap-nhat?page=${page}`);
+    responseCache[cacheKey] = directRes.data;
+    return directRes.data;
+  } catch (err) {
+    console.error('Lỗi gọi contentApi /films/phim-moi-cap-nhat:', err);
+    return { items: [] };
   }
 };
 
@@ -141,19 +147,25 @@ export const fetchMoviesByYear = async (year: string, page: number = 1) => {
     return responseCache[cacheKey];
   }
 
-  try {
-    const response = await internalApi.get(`/movies/year/${year}?page=${page}`);
-    responseCache[cacheKey] = response.data;
-    return response.data;
-  } catch (err) {
-    console.error(`Lỗi gọi API year [${year}]:`, err);
+  const isCustomBackend = INTERNAL_API_URL && INTERNAL_API_URL !== CONTENT_API_URL && !INTERNAL_API_URL.includes('localhost');
+
+  if (isCustomBackend) {
     try {
-      const directRes = await contentApi.get(`/films/nam-phat-hanh/${year}?page=${page}`);
-      responseCache[cacheKey] = directRes.data;
-      return directRes.data;
-    } catch {
-      return { items: [] };
+      const response = await internalApi.get(`/movies/year/${year}?page=${page}`);
+      responseCache[cacheKey] = response.data;
+      return response.data;
+    } catch (err) {
+      console.warn(`Lỗi gọi internalApi year [${year}], fallback sang contentApi:`, err);
     }
+  }
+
+  try {
+    const directRes = await contentApi.get(`/films/nam-phat-hanh/${year}?page=${page}`);
+    responseCache[cacheKey] = directRes.data;
+    return directRes.data;
+  } catch (err) {
+    console.error(`Lỗi gọi contentApi year [${year}]:`, err);
+    return { items: [] };
   }
 };
 
@@ -166,20 +178,26 @@ export const fetchMoviesByCategory = async (type: 'genre' | 'country', slug: str
     return responseCache[cacheKey];
   }
 
-  try {
-    const response = await internalApi.get(`/movies/${type}/${slug}?page=${page}`);
-    responseCache[cacheKey] = response.data;
-    return response.data;
-  } catch (err) {
-    console.error(`Lỗi gọi API ${type} [${slug}]:`, err);
+  const isCustomBackend = INTERNAL_API_URL && INTERNAL_API_URL !== CONTENT_API_URL && !INTERNAL_API_URL.includes('localhost');
+
+  if (isCustomBackend) {
     try {
-      const endpoint = type === 'genre' ? 'the-loai' : 'quoc-gia';
-      const directRes = await contentApi.get(`/films/${endpoint}/${slug}?page=${page}`);
-      responseCache[cacheKey] = directRes.data;
-      return directRes.data;
-    } catch {
-      return { items: [] };
+      const response = await internalApi.get(`/movies/${type}/${slug}?page=${page}`);
+      responseCache[cacheKey] = response.data;
+      return response.data;
+    } catch (err) {
+      console.warn(`Lỗi gọi internalApi ${type} [${slug}], fallback sang contentApi:`, err);
     }
+  }
+
+  try {
+    const endpoint = type === 'genre' ? 'the-loai' : 'quoc-gia';
+    const directRes = await contentApi.get(`/films/${endpoint}/${slug}?page=${page}`);
+    responseCache[cacheKey] = directRes.data;
+    return directRes.data;
+  } catch (err) {
+    console.error(`Lỗi gọi contentApi ${type} [${slug}]:`, err);
+    return { items: [] };
   }
 };
 
