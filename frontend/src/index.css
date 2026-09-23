@@ -1,0 +1,304 @@
+/* Reset CSS cho TV Application */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body, html {
+  width: 100vw;
+  height: 100vh;
+  background-color: #020617;
+  color: #f8fafc;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  overflow: hidden;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+#root {
+  width: 100%;
+  height: 100%;
+}
+
+/* Allow text selection in input fields */
+input, textarea {
+  user-select: text;
+  -webkit-user-select: text;
+}
+
+/* ── Page Transitions ── */
+@keyframes pageFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes pageFadeInFast {
+  from {
+    opacity: 0;
+    transform: translateX(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+.page-enter {
+  animation: pageFadeIn 0.4s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+  width: 100%;
+  height: 100%;
+}
+
+.page-enter-fast {
+  animation: pageFadeInFast 0.35s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+  width: 100%;
+  height: 100%;
+}
+
+/* ── Icon Spin ── */
+@keyframes iconSpin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+.icon-spin {
+  animation: iconSpin 1s linear infinite;
+}
+
+/* ── Loading Spinner ── */
+.loading-spinner {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  color: #38bdf8;
+  font-size: 18px;
+  font-weight: 500;
+  padding: 16px 0;
+}
+
+/* ── Page Header ── */
+.page-header {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.page-header-icon {
+  width: 56px;
+  height: 56px;
+  border-radius: 14px;
+  background: rgba(56, 189, 248, 0.1);
+  border: 1px solid rgba(56, 189, 248, 0.2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.page-header h1 {
+  font-size: 36px;
+  font-weight: 700;
+  color: #f8fafc;
+  margin: 0;
+  letter-spacing: -0.02em;
+}
+
+.page-header p {
+  font-size: 15px;
+  color: #64748b;
+  margin: 4px 0 0;
+}
+
+/* ── Search Input ── */
+.search-input-wrapper {
+  position: relative;
+  width: 100%;
+  max-width: 720px;
+}
+
+.search-input {
+  width: 100%;
+  padding: 18px 24px 18px 56px;
+  font-size: 20px;
+  font-weight: 500;
+  color: #f8fafc;
+  background: #090d16;
+  border: 2px solid #334155;
+  border-radius: 16px;
+  outline: none;
+  transition: border-color 0.25s cubic-bezier(0.4, 0, 0.2, 1),
+              box-shadow 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: inset 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+
+.search-input::placeholder {
+  color: #475569;
+  font-weight: 400;
+}
+
+.search-input:focus {
+  border-color: #38bdf8;
+  box-shadow: inset 0 2px 8px rgba(0, 0, 0, 0.3),
+              0 0 0 3px rgba(56, 189, 248, 0.15);
+}
+
+.search-input-icon {
+  position: absolute;
+  left: 20px;
+  top: 50%;
+  transform: translateY(-50%);
+  pointer-events: none;
+}
+
+.search-clear-btn {
+  position: absolute;
+  right: 16px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: #1e293b;
+  border: none;
+  border-radius: 50%;
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background-color 0.2s ease, transform 0.2s ease;
+}
+
+.search-clear-btn:hover {
+  background: #26354d;
+  transform: translateY(-50%) scale(1.08);
+}
+
+.search-result-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 14px;
+  color: #94a3b8;
+  background: #1e293b;
+  padding: 6px 14px;
+  border-radius: 20px;
+  margin-top: 12px;
+}
+
+/* ── Custom Scrollbar ── */
+.scrollable-content::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+.scrollable-content::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.scrollable-content::-webkit-scrollbar-thumb {
+  background: #334155;
+  border-radius: 3px;
+}
+
+.scrollable-content::-webkit-scrollbar-thumb:hover {
+  background: #475569;
+}
+
+.scrollable-content {
+  scrollbar-width: thin;
+  scrollbar-color: #334155 transparent;
+}
+
+/* ── Horizontal scroll row ── */
+.horizontal-scroll {
+  display: flex;
+  gap: 20px;
+  overflow-x: auto;
+  padding: 12px 12px 20px 12px;
+  margin: -12px -12px -20px -12px;
+  scroll-behavior: smooth;
+  scrollbar-width: none;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+.horizontal-scroll::-webkit-scrollbar {
+  display: none;
+}
+
+/* ── Section title ── */
+.section-title {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 22px;
+  font-weight: 700;
+  color: #f8fafc;
+  margin: 0;
+}
+
+.section-title-accent {
+  color: #38bdf8;
+}
+
+/* ── Action button reset ── */
+.action-button {
+  font-family: inherit;
+}
+
+/* ── Movie card image overlay on hover ── */
+.movie-card-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to top, rgba(2, 6, 23, 0.85) 0%, transparent 50%);
+  opacity: 0;
+  transition: opacity 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  padding-bottom: 16px;
+}
+
+.movie-card:hover .movie-card-overlay {
+  opacity: 1;
+}
+
+/* ── Sidebar active indicator ── */
+.sidebar-item-active {
+  position: relative;
+}
+
+.sidebar-item-active::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 3px;
+  height: 60%;
+  background: #38bdf8;
+  border-radius: 0 3px 3px 0;
+}
+
+/* ── Empty / Error states ── */
+.state-message {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 16px;
+  padding: 12px 0;
+}
+
+.state-message.error {
+  color: #f87171;
+}
+
+.state-message.info {
+  color: #94a3b8;
+}
