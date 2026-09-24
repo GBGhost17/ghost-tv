@@ -42,6 +42,7 @@ function MenuItem({ label, iconName, path }: MenuItemProps) {
         transform: isHovered && !isActive ? 'translateX(4px)' : 'translateX(0)',
         transition: `all ${theme.transition.normal}`,
         position: 'relative',
+        flexShrink: 0,
       }}
     >
       <Icon
@@ -68,23 +69,29 @@ export function TVSidebar() {
     <div
       style={{
         width: theme.sidebar.width,
-        height: '100vh',
+        height: '100dvh',
+        maxHeight: '100vh',
         backgroundColor: theme.colors.bgPrimary,
         borderRight: `1px solid ${theme.colors.border}`,
-        padding: '28px 10px',
+        padding: '24px 10px calc(24px + env(safe-area-inset-bottom, 20px)) 10px',
         display: 'flex',
         flexDirection: 'column',
-        gap: '6px',
         position: 'fixed',
         top: 0,
         left: 0,
         boxSizing: 'border-box',
         zIndex: 50,
+        overflowX: 'hidden',
+        overflowY: 'auto',
+        scrollbarWidth: 'none',
+        msOverflowStyle: 'none',
       }}
     >
+      {/* Brand Header */}
       <div style={{
         display: 'flex', alignItems: 'center', gap: '12px',
-        marginBottom: '36px', paddingLeft: '8px',
+        marginBottom: '24px', paddingLeft: '8px',
+        flexShrink: 0,
       }}>
         <img 
           src="/favicon.svg" 
@@ -101,11 +108,29 @@ export function TVSidebar() {
         </span>
       </div>
 
-      {menuItems.map((item) => (
-        <MenuItem key={item.path} {...item} />
-      ))}
+      {/* Middle Menu Items */}
+      <div style={{
+        display: 'flex',
+        flexDirection: 'column',
+        gap: '4px',
+        flex: 1,
+        overflowX: 'hidden',
+        overflowY: 'auto',
+        scrollbarWidth: 'none',
+        msOverflowStyle: 'none',
+      }}>
+        {menuItems.map((item) => (
+          <MenuItem key={item.path} {...item} />
+        ))}
+      </div>
 
-      <div style={{ marginTop: 'auto', paddingTop: '16px', borderTop: `1px solid ${theme.colors.border}` }}>
+      {/* Anchored Bottom Item (Quay lại) */}
+      <div style={{
+        marginTop: 'auto',
+        paddingTop: '12px',
+        borderTop: `1px solid ${theme.colors.border}`,
+        flexShrink: 0,
+      }}>
         <MenuItem label="Quay lại" iconName={icons.back} path="/" />
       </div>
     </div>
