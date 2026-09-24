@@ -196,47 +196,65 @@ export function PlayerScreen() {
       backgroundColor: theme.colors.bgDeep,
       display: 'flex', flexDirection: 'column',
       boxSizing: 'border-box', overflowY: 'auto',
-      padding: isMobile ? '16px 12px 0 12px' : '24px 48px 0 48px',
-      gap: isMobile ? '18px' : '28px',
+      padding: isMobile ? '14px 12px 0 12px' : '24px 48px 0 48px',
+      gap: isMobile ? '14px' : '28px',
     }}>
       {/* Top Navigation Bar */}
-      <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: '14px', flexWrap: 'wrap' }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: isMobile ? '10px' : '16px' }}>
+      {isMobile ? (
+        /* Mobile Top Bar: Minimalist Back Button & Episode Badge */
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '10px', width: '100%' }}>
           <ActionButton
             onClick={handleGoBack}
             variant="ghost"
             size="sm"
-            icon={<Icon name={icons.back} size={isMobile ? 18 : 20} color={theme.colors.accent} />}
+            icon={<Icon name={icons.back} size={18} color={theme.colors.accent} />}
           >
             Trở về
           </ActionButton>
-          <div>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap' }}>
-              <h1 style={{ fontSize: isMobile ? '20px' : '28px', fontWeight: 800, color: theme.colors.textPrimary, margin: 0, letterSpacing: '-0.01em' }}>
-                {movie.name}
-              </h1>
-              {movie.original_name && (
-                <span style={{ fontSize: isMobile ? '13px' : '16px', color: theme.colors.textMuted, fontStyle: 'italic' }}>
-                  ({movie.original_name})
-                </span>
+          {currentEpisode && (
+            <MetaBadge value={`Đang phát: Tập ${currentEpisode.name}`} color={theme.colors.accent} />
+          )}
+        </div>
+      ) : (
+        /* Desktop Top Bar: Title + Badges + Back Button */
+        <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: '14px', flexWrap: 'wrap' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
+            <ActionButton
+              onClick={handleGoBack}
+              variant="ghost"
+              size="sm"
+              icon={<Icon name={icons.back} size={20} color={theme.colors.accent} />}
+            >
+              Trở về
+            </ActionButton>
+            <div>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap' }}>
+                <h1 style={{ fontSize: '28px', fontWeight: 800, color: theme.colors.textPrimary, margin: 0, letterSpacing: '-0.01em' }}>
+                  {movie.name}
+                </h1>
+                {movie.original_name && (
+                  <span style={{ fontSize: '16px', color: theme.colors.textMuted, fontStyle: 'italic' }}>
+                    ({movie.original_name})
+                  </span>
+                )}
+              </div>
+              {currentEpisode && (
+                <div style={{ marginTop: '2px', fontSize: '15px', color: theme.colors.accent, fontWeight: 600 }}>
+                  Đang phát: Tập {currentEpisode.name}
+                </div>
               )}
             </div>
-            {currentEpisode && (
-              <div style={{ marginTop: '2px', fontSize: isMobile ? '13px' : '15px', color: theme.colors.accent, fontWeight: 600 }}>
-                Đang phát: Tập {currentEpisode.name}
-              </div>
-            )}
+          </div>
+
+          {/* Quick Badges */}
+          <div style={{ display: 'flex', gap: '6px', flexWrap: 'wrap', alignItems: 'center' }}>
+            {movie.quality && <MetaBadge value={movie.quality} color={theme.colors.accent} />}
+            {movie.language && <MetaBadge value={movie.language} color={theme.colors.success} />}
+            {movie.time && <MetaBadge value={movie.time} color={theme.colors.warning} />}
+            {movie.current_episode && <MetaBadge label="Tình trạng" value={movie.current_episode} color="#a855f7" />}
           </div>
         </div>
-
-        {/* Quick Badges */}
-        <div style={{ display: 'flex', gap: '6px', flexWrap: 'wrap', alignItems: 'center' }}>
-          {movie.quality && <MetaBadge value={movie.quality} color={theme.colors.accent} />}
-          {movie.language && <MetaBadge value={movie.language} color={theme.colors.success} />}
-          {movie.time && <MetaBadge value={movie.time} color={theme.colors.warning} />}
-          {movie.current_episode && <MetaBadge label="Tình trạng" value={movie.current_episode} color="#a855f7" />}
-        </div>
-      </div>
+      )}
 
       {/* Pure 16:9 Widescreen Video Player Container */}
       <div style={{
@@ -266,6 +284,36 @@ export function PlayerScreen() {
           </div>
         )}
       </div>
+
+      {/* Mobile Title & Meta Section (Placed directly below Video Player on Mobile) */}
+      {isMobile && (
+        <div style={{
+          display: 'flex',
+          flexDirection: 'column',
+          gap: '8px',
+          backgroundColor: theme.colors.bgPrimary,
+          padding: '14px 16px',
+          borderRadius: theme.radius.lg,
+          border: `1px solid ${theme.colors.border}`,
+          width: '100%',
+          boxSizing: 'border-box',
+        }}>
+          <h1 style={{ fontSize: '19px', fontWeight: 800, color: theme.colors.textPrimary, margin: 0, lineHeight: 1.35 }}>
+            {movie.name}
+          </h1>
+          {movie.original_name && (
+            <div style={{ fontSize: '13px', color: theme.colors.textMuted, fontStyle: 'italic' }}>
+              ({movie.original_name})
+            </div>
+          )}
+          <div style={{ display: 'flex', gap: '6px', flexWrap: 'wrap', marginTop: '4px' }}>
+            {movie.quality && <MetaBadge value={movie.quality} color={theme.colors.accent} />}
+            {movie.language && <MetaBadge value={movie.language} color={theme.colors.success} />}
+            {movie.time && <MetaBadge value={movie.time} color={theme.colors.warning} />}
+            {movie.current_episode && <MetaBadge label="Tình trạng" value={movie.current_episode} color="#a855f7" />}
+          </div>
+        </div>
+      )}
 
       {/* Server & Episode Selector Card */}
       <div style={{
