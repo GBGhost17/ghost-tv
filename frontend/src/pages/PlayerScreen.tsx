@@ -10,7 +10,7 @@ import { useDraggableScroll } from '../hooks/useDraggableScroll';
 import { saveToHistory } from '../services/history';
 import { Footer } from '../components/Footer';
 
-function ServerButton({ label, isSelected, onClick }: { label: string; isSelected: boolean; onClick: () => void }) {
+function ServerButton({ label, isSelected, onClick, isMobile }: { label: string; isSelected: boolean; onClick: () => void; isMobile?: boolean }) {
   const [isHovered, setIsHovered] = useState(false);
 
   return (
@@ -20,7 +20,7 @@ function ServerButton({ label, isSelected, onClick }: { label: string; isSelecte
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
       style={{
-        padding: '10px 20px',
+        padding: isMobile ? '8px 14px' : '10px 20px',
         backgroundColor: isSelected ? theme.colors.accent : isHovered ? theme.colors.bgHoverLight : theme.colors.bgElevated,
         color: isSelected ? theme.colors.bgDeep : theme.colors.textPrimary,
         border: '2px solid',
@@ -28,7 +28,7 @@ function ServerButton({ label, isSelected, onClick }: { label: string; isSelecte
         borderRadius: theme.radius.sm,
         cursor: 'pointer',
         fontWeight: 600,
-        fontSize: '14px',
+        fontSize: isMobile ? '13px' : '14px',
         outline: 'none',
         fontFamily: 'inherit',
         transition: `all ${theme.transition.normal}`,
@@ -41,7 +41,7 @@ function ServerButton({ label, isSelected, onClick }: { label: string; isSelecte
   );
 }
 
-function EpisodeButton({ episode, isSelected, onSelect }: { episode: EpisodeItem; isSelected: boolean; onSelect: () => void }) {
+function EpisodeButton({ episode, isSelected, onSelect, isMobile }: { episode: EpisodeItem; isSelected: boolean; onSelect: () => void; isMobile?: boolean }) {
   const [isHovered, setIsHovered] = useState(false);
 
   return (
@@ -50,21 +50,22 @@ function EpisodeButton({ episode, isSelected, onSelect }: { episode: EpisodeItem
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
       style={{
-        minWidth: '85px', height: '42px',
+        minWidth: isMobile ? '64px' : '85px',
+        height: isMobile ? '36px' : '42px',
         display: 'flex', alignItems: 'center', justifyContent: 'center',
         backgroundColor: isSelected ? theme.colors.accent : isHovered ? theme.colors.bgHover : theme.colors.bgPrimary,
         color: isSelected ? theme.colors.bgDeep : theme.colors.textPrimary,
         borderRadius: theme.radius.sm,
         cursor: 'pointer',
         fontWeight: 600,
-        fontSize: '14px',
+        fontSize: isMobile ? '13px' : '14px',
         border: '2px solid',
         borderColor: isHovered && !isSelected ? theme.colors.accent : theme.colors.border,
         transition: `all ${theme.transition.normal}`,
         transform: isHovered ? 'translateY(-2px)' : 'translateY(0)',
         boxShadow: isHovered ? theme.shadow.sm : 'none',
         flexShrink: 0,
-        padding: '0 14px',
+        padding: isMobile ? '0 10px' : '0 14px',
       }}
     >
       Tập {episode.name}
@@ -76,11 +77,11 @@ function MetaBadge({ label, value, color }: { label?: string; value: string; col
   return (
     <div style={{
       display: 'inline-flex', alignItems: 'center', gap: '6px',
-      padding: '5px 12px', borderRadius: theme.radius.full,
+      padding: '4px 10px', borderRadius: theme.radius.full,
       backgroundColor: color ? `${color}20` : 'rgba(56, 189, 248, 0.12)',
       border: `1px solid ${color ? `${color}40` : 'rgba(56, 189, 248, 0.25)'}`,
       color: color || theme.colors.accent,
-      fontSize: '13px', fontWeight: 600,
+      fontSize: '12px', fontWeight: 600,
     }}>
       {label && <span style={{ opacity: 0.8 }}>{label}:</span>}
       <span>{value}</span>
@@ -99,9 +100,16 @@ export function PlayerScreen() {
   const [currentEpisode, setCurrentEpisode] = useState<EpisodeItem | null>(null);
   const [loading, setLoading] = useState(true);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
+  const [isMobile, setIsMobile] = useState(() => typeof window !== 'undefined' ? window.innerWidth < 768 : false);
 
   const episodesScrollRef = useDraggableScroll<HTMLDivElement>();
   const handleGoBack = useCallback(() => navigate(-1), [navigate]);
+
+  useEffect(() => {
+    const handleResize = () => setIsMobile(window.innerWidth < 768);
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
 
   useEffect(() => {
     if (!slug) return;
@@ -187,33 +195,34 @@ export function PlayerScreen() {
       width: '100vw', minHeight: '100vh',
       backgroundColor: theme.colors.bgDeep,
       display: 'flex', flexDirection: 'column',
-      boxSizing: 'border-box', overflowY: 'auto', padding: '24px 48px 80px',
-      gap: '28px',
+      boxSizing: 'border-box', overflowY: 'auto',
+      padding: isMobile ? '16px 12px 0 12px' : '24px 48px 0 48px',
+      gap: isMobile ? '18px' : '28px',
     }}>
       {/* Top Navigation Bar */}
-      <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: '20px', flexWrap: 'wrap' }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
+      <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: '14px', flexWrap: 'wrap' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: isMobile ? '10px' : '16px' }}>
           <ActionButton
             onClick={handleGoBack}
             variant="ghost"
             size="sm"
-            icon={<Icon name={icons.back} size={20} color={theme.colors.accent} />}
+            icon={<Icon name={icons.back} size={isMobile ? 18 : 20} color={theme.colors.accent} />}
           >
             Trở về
           </ActionButton>
           <div>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '12px', flexWrap: 'wrap' }}>
-              <h1 style={{ fontSize: '28px', fontWeight: 800, color: theme.colors.textPrimary, margin: 0, letterSpacing: '-0.01em' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap' }}>
+              <h1 style={{ fontSize: isMobile ? '20px' : '28px', fontWeight: 800, color: theme.colors.textPrimary, margin: 0, letterSpacing: '-0.01em' }}>
                 {movie.name}
               </h1>
               {movie.original_name && (
-                <span style={{ fontSize: '16px', color: theme.colors.textMuted, fontStyle: 'italic' }}>
+                <span style={{ fontSize: isMobile ? '13px' : '16px', color: theme.colors.textMuted, fontStyle: 'italic' }}>
                   ({movie.original_name})
                 </span>
               )}
             </div>
             {currentEpisode && (
-              <div style={{ marginTop: '4px', fontSize: '15px', color: theme.colors.accent, fontWeight: 600 }}>
+              <div style={{ marginTop: '2px', fontSize: isMobile ? '13px' : '15px', color: theme.colors.accent, fontWeight: 600 }}>
                 Đang phát: Tập {currentEpisode.name}
               </div>
             )}
@@ -221,7 +230,7 @@ export function PlayerScreen() {
         </div>
 
         {/* Quick Badges */}
-        <div style={{ display: 'flex', gap: '10px', flexWrap: 'wrap', alignItems: 'center' }}>
+        <div style={{ display: 'flex', gap: '6px', flexWrap: 'wrap', alignItems: 'center' }}>
           {movie.quality && <MetaBadge value={movie.quality} color={theme.colors.accent} />}
           {movie.language && <MetaBadge value={movie.language} color={theme.colors.success} />}
           {movie.time && <MetaBadge value={movie.time} color={theme.colors.warning} />}
@@ -234,10 +243,9 @@ export function PlayerScreen() {
         width: '100%',
         maxWidth: '1280px',
         aspectRatio: '16 / 9',
-        minHeight: '480px',
         flexShrink: 0,
         backgroundColor: '#000',
-        borderRadius: theme.radius.xl,
+        borderRadius: isMobile ? theme.radius.md : theme.radius.xl,
         overflow: 'hidden',
         border: `1px solid ${theme.colors.borderLight}`,
         boxShadow: theme.shadow.lg,
@@ -254,7 +262,7 @@ export function PlayerScreen() {
         ) : (
           <div style={{ width: '100%', height: '100%', display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '10px' }}>
             <Icon name={icons.warning} size={28} color={theme.colors.error} />
-            <span style={{ color: theme.colors.error, fontSize: '16px', fontWeight: 600 }}>Nguồn phát video chưa sẵn sàng.</span>
+            <span style={{ color: theme.colors.error, fontSize: '15px', fontWeight: 600 }}>Nguồn phát video chưa sẵn sàng.</span>
           </div>
         )}
       </div>
@@ -265,20 +273,22 @@ export function PlayerScreen() {
         maxWidth: '1280px',
         margin: '0 auto',
         backgroundColor: theme.colors.bgPrimary,
-        padding: '28px',
-        borderRadius: theme.radius.xl,
+        padding: isMobile ? '16px' : '28px',
+        borderRadius: isMobile ? theme.radius.lg : theme.radius.xl,
         border: `1px solid ${theme.colors.border}`,
         display: 'flex',
         flexDirection: 'column',
-        gap: '20px',
+        gap: isMobile ? '14px' : '20px',
+        boxSizing: 'border-box',
       }}>
-        <div style={{ display: 'flex', gap: '14px', alignItems: 'center', flexWrap: 'wrap' }}>
-          <span style={{ fontSize: '16px', fontWeight: 700, color: theme.colors.textPrimary }}>Nguồn Server:</span>
+        <div style={{ display: 'flex', gap: '10px', alignItems: 'center', flexWrap: 'wrap' }}>
+          <span style={{ fontSize: isMobile ? '14px' : '16px', fontWeight: 700, color: theme.colors.textPrimary }}>Nguồn Server:</span>
           {movie.episodes.map((server, idx) => (
             <ServerButton
               key={server.server_name}
               label={server.server_name}
               isSelected={selectedServerIndex === idx}
+              isMobile={isMobile}
               onClick={() => {
                 setSelectedServerIndex(idx);
                 if (server.items.length) setCurrentEpisode(server.items[0]);
@@ -287,17 +297,17 @@ export function PlayerScreen() {
           ))}
         </div>
 
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
-          <span style={{ fontSize: '16px', fontWeight: 700, color: theme.colors.textPrimary }}>Danh sách tập phim:</span>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+          <span style={{ fontSize: isMobile ? '14px' : '16px', fontWeight: 700, color: theme.colors.textPrimary }}>Danh sách tập phim:</span>
           <div
             ref={episodesScrollRef}
             style={{
               display: 'flex',
-              gap: '12px',
+              gap: isMobile ? '8px' : '12px',
               flexWrap: 'wrap',
-              maxHeight: '220px',
+              maxHeight: isMobile ? '180px' : '220px',
               overflowY: 'auto',
-              paddingRight: '6px',
+              paddingRight: '4px',
             }}
           >
             {activeServer?.items.map((ep) => (
@@ -305,6 +315,7 @@ export function PlayerScreen() {
                 key={ep.slug}
                 episode={ep}
                 isSelected={currentEpisode?.slug === ep.slug}
+                isMobile={isMobile}
                 onSelect={() => setCurrentEpisode(ep)}
               />
             ))}
@@ -318,87 +329,99 @@ export function PlayerScreen() {
         maxWidth: '1280px',
         margin: '0 auto',
         backgroundColor: theme.colors.bgPrimary,
-        padding: '32px',
-        borderRadius: theme.radius.xl,
+        padding: isMobile ? '16px' : '32px',
+        borderRadius: isMobile ? theme.radius.lg : theme.radius.xl,
         border: `1px solid ${theme.colors.border}`,
         display: 'flex',
-        gap: '32px',
-        flexWrap: 'wrap',
+        flexDirection: 'column',
+        gap: isMobile ? '18px' : '28px',
+        boxSizing: 'border-box',
       }}>
-        {/* Poster Image */}
-        <img
-          src={movie.thumb_url}
-          alt={movie.name}
-          style={{
-            width: '180px',
-            height: '260px',
-            objectFit: 'cover',
-            borderRadius: theme.radius.lg,
-            border: `1px solid ${theme.colors.borderLight}`,
-            flexShrink: 0,
-            boxShadow: theme.shadow.md,
-          }}
-        />
+        {/* Row 1: Thumbnail Poster (Left) + Movie Metadata (Right) */}
+        <div style={{
+          display: 'flex',
+          flexDirection: 'row',
+          gap: isMobile ? '14px' : '28px',
+          alignItems: 'flex-start',
+          width: '100%',
+        }}>
+          {/* Poster Image */}
+          <img
+            src={movie.thumb_url}
+            alt={movie.name}
+            style={{
+              width: isMobile ? '120px' : '180px',
+              height: isMobile ? '175px' : '260px',
+              objectFit: 'cover',
+              borderRadius: theme.radius.lg,
+              border: `1px solid ${theme.colors.borderLight}`,
+              flexShrink: 0,
+              boxShadow: theme.shadow.md,
+            }}
+          />
 
-        {/* Info Grid & Description */}
-        <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: '20px', minWidth: '320px' }}>
-          <h2 style={{ fontSize: '24px', fontWeight: 700, color: theme.colors.textPrimary, margin: 0 }}>
-            Thông tin phim
-          </h2>
+          {/* Right Column: Metadata Grid */}
+          <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: isMobile ? '10px' : '16px', minWidth: 0 }}>
+            <h2 style={{ fontSize: isMobile ? '18px' : '24px', fontWeight: 700, color: theme.colors.textPrimary, margin: 0 }}>
+              Thông tin phim
+            </h2>
 
-          {/* Metadata Grid */}
-          <div style={{
-            display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fill, minmax(260px, 1fr))',
-            gap: '14px',
-            backgroundColor: theme.colors.bgSecondary,
-            padding: '20px',
-            borderRadius: theme.radius.md,
-            border: `1px solid ${theme.colors.border}`,
-            fontSize: '14px',
-          }}>
-            {movie.original_name && (
-              <div>
-                <span style={{ color: theme.colors.textMuted }}>Tên gốc: </span>
-                <span style={{ color: theme.colors.textPrimary, fontWeight: 600 }}>{movie.original_name}</span>
-              </div>
-            )}
-            {movie.director && (
-              <div>
-                <span style={{ color: theme.colors.textMuted }}>Đạo diễn: </span>
-                <span style={{ color: theme.colors.textPrimary, fontWeight: 600 }}>{movie.director}</span>
-              </div>
-            )}
-            {movie.casts && (
-              <div style={{ gridColumn: '1 / -1' }}>
-                <span style={{ color: theme.colors.textMuted }}>Diễn viên: </span>
-                <span style={{ color: theme.colors.textPrimary, fontWeight: 600 }}>{movie.casts}</span>
-              </div>
-            )}
-            {categoriesList.map((catGroup) => (
-              <div key={catGroup.groupName}>
-                <span style={{ color: theme.colors.textMuted }}>{catGroup.groupName}: </span>
-                <span style={{ color: theme.colors.accent, fontWeight: 600 }}>{catGroup.items.join(', ')}</span>
-              </div>
-            ))}
+            {/* Metadata Grid */}
+            <div style={{
+              display: 'grid',
+              gridTemplateColumns: isMobile ? '1fr' : 'repeat(auto-fill, minmax(240px, 1fr))',
+              gap: isMobile ? '6px 10px' : '12px 16px',
+              backgroundColor: theme.colors.bgSecondary,
+              padding: isMobile ? '12px' : '20px',
+              borderRadius: theme.radius.md,
+              border: `1px solid ${theme.colors.border}`,
+              fontSize: isMobile ? '13px' : '14px',
+            }}>
+              {movie.original_name && (
+                <div>
+                  <span style={{ color: theme.colors.textMuted }}>Tên gốc: </span>
+                  <span style={{ color: theme.colors.textPrimary, fontWeight: 600 }}>{movie.original_name}</span>
+                </div>
+              )}
+              {movie.director && (
+                <div>
+                  <span style={{ color: theme.colors.textMuted }}>Đạo diễn: </span>
+                  <span style={{ color: theme.colors.textPrimary, fontWeight: 600 }}>{movie.director}</span>
+                </div>
+              )}
+              {movie.casts && (
+                <div style={{ gridColumn: '1 / -1' }}>
+                  <span style={{ color: theme.colors.textMuted }}>Diễn viên: </span>
+                  <span style={{ color: theme.colors.textPrimary, fontWeight: 600 }}>{movie.casts}</span>
+                </div>
+              )}
+              {categoriesList.map((catGroup) => (
+                <div key={catGroup.groupName}>
+                  <span style={{ color: theme.colors.textMuted }}>{catGroup.groupName}: </span>
+                  <span style={{ color: theme.colors.accent, fontWeight: 600 }}>{catGroup.items.join(', ')}</span>
+                </div>
+              ))}
+            </div>
           </div>
+        </div>
 
-          {/* Full Description */}
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
-            <span style={{ fontSize: '17px', fontWeight: 700, color: theme.colors.textPrimary }}>Nội dung chi tiết:</span>
-            <div
-              style={{
-                fontSize: '15px',
-                color: '#cbd5e1',
-                lineHeight: 1.75,
-                backgroundColor: theme.colors.bgSecondary,
-                padding: '20px',
-                borderRadius: theme.radius.md,
-                border: `1px solid ${theme.colors.border}`,
-              }}
-              dangerouslySetInnerHTML={{ __html: movie.description }}
-            />
-          </div>
+        {/* Row 2: Full Detailed Description (Below Row 1) */}
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', width: '100%' }}>
+          <span style={{ fontSize: isMobile ? '15px' : '17px', fontWeight: 700, color: theme.colors.textPrimary }}>
+            Nội dung chi tiết:
+          </span>
+          <div
+            style={{
+              fontSize: isMobile ? '13px' : '15px',
+              color: '#cbd5e1',
+              lineHeight: 1.65,
+              backgroundColor: theme.colors.bgSecondary,
+              padding: isMobile ? '14px' : '20px',
+              borderRadius: theme.radius.md,
+              border: `1px solid ${theme.colors.border}`,
+            }}
+            dangerouslySetInnerHTML={{ __html: movie.description }}
+          />
         </div>
       </div>
       <Footer />

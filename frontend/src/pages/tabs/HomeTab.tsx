@@ -26,7 +26,7 @@ function HorizontalMovieRow({ title, iconName, movies, onSelectMovie }: {
       </h2>
       <div ref={scrollRef} className="horizontal-scroll">
         {movies.map((movie) => (
-          <div key={movie.id} style={{ flex: '0 0 auto' }}>
+          <div key={movie.id} className="horizontal-card-item">
             <MovieCard
               title={movie.name}
               thumbUrl={movie.thumb_url}
@@ -149,7 +149,7 @@ export function HomeTab() {
             <Icon name={icons.library} size={24} color={theme.colors.accent} />
             Kho Phim Tổng Hợp
           </h2>
-          <div style={{ display: 'flex', gap: '20px', flexWrap: 'wrap' }}>
+          <div className="movie-grid">
             {catalogMovies.slice(0, displayCount).map((movie) => (
               <MovieCard
                 key={`cat-${movie.id}`}

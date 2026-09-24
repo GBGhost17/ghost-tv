@@ -96,7 +96,7 @@ export function SingleMoviesTab() {
 
       {loading && movies.length === 0 && <LoadingSpinner />}
 
-      <div style={{ display: 'flex', gap: '20px', flexWrap: 'wrap' }}>
+      <div className="movie-grid">
         {movies.map((movie) => (
           <MovieCard
             key={movie.id}

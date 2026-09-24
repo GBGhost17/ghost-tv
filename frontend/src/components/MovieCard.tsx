@@ -6,20 +6,22 @@ interface MovieCardProps {
   title: string;
   thumbUrl: string;
   onEnter: () => void;
+  style?: React.CSSProperties;
+  className?: string;
 }
 
-export function MovieCard({ title, thumbUrl, onEnter }: MovieCardProps) {
+export function MovieCard({ title, thumbUrl, onEnter, style, className }: MovieCardProps) {
   const [isHovered, setIsHovered] = useState(false);
 
   return (
     <div
-      className="movie-card"
+      className={`movie-card${className ? ` ${className}` : ''}`}
       onClick={onEnter}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
       style={{
-        width: '210px',
-        height: '310px',
+        width: '100%',
+        aspectRatio: '210 / 310',
         backgroundColor: theme.colors.bgElevated,
         borderRadius: theme.radius.md,
         border: '2px solid',
@@ -33,9 +35,11 @@ export function MovieCard({ title, thumbUrl, onEnter }: MovieCardProps) {
         overflow: 'hidden',
         flexShrink: 0,
         position: 'relative',
+        boxSizing: 'border-box',
+        ...style,
       }}
     >
-      <div style={{ position: 'relative', height: '82%', overflow: 'hidden' }}>
+      <div style={{ position: 'relative', height: '80%', width: '100%', overflow: 'hidden' }}>
         <img
           src={thumbUrl}
           alt={title}
@@ -53,7 +57,7 @@ export function MovieCard({ title, thumbUrl, onEnter }: MovieCardProps) {
       </div>
       <div
         style={{
-          padding: '12px 10px',
+          padding: '8px 10px',
           fontSize: '13px',
           fontWeight: 600,
           textAlign: 'center',
@@ -67,6 +71,8 @@ export function MovieCard({ title, thumbUrl, onEnter }: MovieCardProps) {
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
+          width: '100%',
+          boxSizing: 'border-box',
         }}
       >
         {title}

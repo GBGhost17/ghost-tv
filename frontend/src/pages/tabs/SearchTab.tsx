@@ -121,7 +121,7 @@ export function SearchTab() {
           </div>
         )}
 
-        <div style={{ display: 'flex', gap: '20px', flexWrap: 'wrap' }}>
+        <div className="movie-grid">
           {results.map((movie) => (
             <MovieCard
               key={movie.id}

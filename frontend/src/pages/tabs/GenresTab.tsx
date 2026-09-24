@@ -18,11 +18,12 @@ function ViewAllButton({ label, onEnter }: { label: string; onEnter: () => void 
 
   return (
     <div
+      className="horizontal-card-item"
       onClick={onEnter}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
       style={{
-        flex: '0 0 180px', height: '280px',
+        aspectRatio: '210 / 310',
         border: '2px dashed',
         borderColor: isHovered ? theme.colors.accent : theme.colors.borderLight,
         borderRadius: theme.radius.md,
@@ -33,10 +34,12 @@ function ViewAllButton({ label, onEnter }: { label: string; onEnter: () => void 
         transform: isHovered ? 'translateY(-6px)' : 'translateY(0)',
         boxShadow: isHovered ? theme.shadow.md : 'none',
         backgroundColor: isHovered ? theme.colors.bgHover : theme.colors.bgSecondary,
+        boxSizing: 'border-box',
+        padding: '12px',
       }}
     >
-      <Icon name={icons.forward} size={32} color={isHovered ? theme.colors.accent : theme.colors.textSecondary} />
-      <span style={{ fontSize: '14px', fontWeight: 600, textAlign: 'center', lineHeight: 1.4 }}>
+      <Icon name={icons.forward} size={28} color={isHovered ? theme.colors.accent : theme.colors.textSecondary} />
+      <span style={{ fontSize: '13px', fontWeight: 600, textAlign: 'center', lineHeight: 1.4 }}>
         Xem tất cả<br />{label}
       </span>
     </div>
@@ -52,7 +55,7 @@ function GenreRow({ genre, movies }: { genre: { name: string; slug: string }; mo
       <h2 className="section-title section-title-accent">{genre.name}</h2>
       <div ref={scrollRef} className="horizontal-scroll">
         {movies.map((movie) => (
-          <div key={movie.id} style={{ flex: '0 0 auto' }}>
+          <div key={movie.id} className="horizontal-card-item">
             <MovieCard
               title={movie.name}
               thumbUrl={movie.thumb_url}

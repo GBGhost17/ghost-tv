@@ -302,3 +302,38 @@ input, textarea {
 .state-message.info {
   color: #94a3b8;
 }
+
+/* ── Movie Grid Responsive ── */
+.movie-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 14px;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+@media (min-width: 540px) {
+  .movie-grid {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+  }
+}
+
+@media (min-width: 768px) {
+  .movie-grid {
+    grid-template-columns: repeat(auto-fill, minmax(190px, 1fr));
+    gap: 20px;
+  }
+}
+
+.horizontal-card-item {
+  flex: 0 0 140px;
+  width: 140px;
+}
+
+@media (min-width: 768px) {
+  .horizontal-card-item {
+    flex: 0 0 200px;
+    width: 200px;
+  }
+}

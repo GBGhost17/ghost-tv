@@ -51,4 +51,6 @@ export const icons = {
   film: 'mdi:filmstrip',
   clear: 'mdi:close-circle-outline',
   logo: 'mdi:television-play',
+  menu: 'mdi:menu',
+  close: 'mdi:close',
 } as const;

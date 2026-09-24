@@ -69,7 +69,7 @@ export function CategoryDetailScreen() {
         onYearChange={handleYearChange}
       />
 
-      <div style={{ display: 'flex', gap: '20px', flexWrap: 'wrap' }}>
+      <div className="movie-grid">
         {movies.map((movie) => (
           <MovieCard
             key={movie.id}
