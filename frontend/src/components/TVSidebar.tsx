@@ -86,7 +86,16 @@ export function TVSidebar() {
         display: 'flex', alignItems: 'center', gap: '12px',
         marginBottom: '36px', paddingLeft: '8px',
       }}>
-        <Icon name={icons.logo} size={30} color={theme.colors.accent} />
+        <img 
+          src="/favicon.svg" 
+          alt="Ghost TV Logo" 
+          style={{ 
+            width: '30px', 
+            height: '30px', 
+            objectFit: 'contain', 
+            display: 'block'
+          }} 
+        />
         <span style={{ fontSize: '22px', fontWeight: 800, color: theme.colors.textPrimary, letterSpacing: '0.5px' }}>
           GHOST TV
         </span>

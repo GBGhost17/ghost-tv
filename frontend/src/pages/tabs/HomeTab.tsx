@@ -112,10 +112,9 @@ export function HomeTab() {
   };
 
   return (
-    <div className="scrollable-content" style={{
+    <div style={{
       display: 'flex', flexDirection: 'column', gap: '36px',
-      paddingBottom: '80px', width: '100%', height: '100%',
-      overflowY: 'auto', boxSizing: 'border-box',
+      width: '100%', boxSizing: 'border-box',
     }}>
       <PageHeader
         icon={icons.home}

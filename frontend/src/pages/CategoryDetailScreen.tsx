@@ -52,17 +52,12 @@ export function CategoryDetailScreen() {
 
   return (
     <div
-      className="page-enter scrollable-content"
       style={{
         width: '100%',
-        minHeight: '100vh',
-        backgroundColor: theme.colors.bgDeep,
-        padding: '36px 48px',
         display: 'flex',
         flexDirection: 'column',
         gap: '28px',
         boxSizing: 'border-box',
-        overflowY: 'auto',
       }}
     >
       <PageHeader

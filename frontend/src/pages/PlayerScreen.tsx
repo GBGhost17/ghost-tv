@@ -8,6 +8,7 @@ import { ActionButton } from '../components/ui/ActionButton';
 import { theme } from '../styles/theme';
 import { useDraggableScroll } from '../hooks/useDraggableScroll';
 import { saveToHistory } from '../services/history';
+import { Footer } from '../components/Footer';
 
 function ServerButton({ label, isSelected, onClick }: { label: string; isSelected: boolean; onClick: () => void }) {
   const [isHovered, setIsHovered] = useState(false);
@@ -400,6 +401,7 @@ export function PlayerScreen() {
           </div>
         </div>
       </div>
+      <Footer />
     </div>
   );
 }

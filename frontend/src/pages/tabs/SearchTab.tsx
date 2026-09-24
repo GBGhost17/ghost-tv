@@ -61,15 +61,12 @@ export function SearchTab() {
 
   return (
     <div
-      className="scrollable-content page-enter-fast"
+      className="page-enter-fast"
       style={{
         display: 'flex',
         flexDirection: 'column',
         gap: '32px',
-        paddingBottom: '80px',
         width: '100%',
-        height: '100%',
-        overflowY: 'auto',
         boxSizing: 'border-box',
       }}
     >

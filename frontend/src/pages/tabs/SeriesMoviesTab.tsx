@@ -76,15 +76,11 @@ export function SeriesMoviesTab() {
 
   return (
     <div
-      className="scrollable-content"
       style={{
         display: 'flex',
         flexDirection: 'column',
         gap: '32px',
-        paddingBottom: '80px',
         width: '100%',
-        height: '100%',
-        overflowY: 'auto',
         boxSizing: 'border-box',
       }}
     >

@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Icon, icons } from '../components/Icon';
+import { Footer } from '../components/Footer';
 import { theme } from '../styles/theme';
 
 interface HomeCardProps {
@@ -85,51 +86,69 @@ function HomeMenuCard({ title, subtitle, iconName, path, badge, accentColor }: H
 
 export function HomeScreen() {
   return (
-    <div className="page-enter" style={{
-      width: '100vw', height: '100vh',
+    <div className="page-enter scrollable-content" style={{
+      width: '100vw', minHeight: '100vh',
       backgroundColor: theme.colors.bgDeep,
       backgroundImage: 'radial-gradient(ellipse at 15% 25%, rgba(30, 41, 59, 0.5) 0%, rgba(2, 6, 23, 1) 70%)',
       display: 'flex', flexDirection: 'column',
-      justifyContent: 'center', alignItems: 'center',
-      padding: '60px', boxSizing: 'border-box',
+      boxSizing: 'border-box', overflowY: 'auto',
     }}>
       <div style={{
-        width: '100%', maxWidth: '1200px',
-        marginBottom: '48px',
-        textAlign: 'center',
-        display: 'flex', flexDirection: 'column', alignItems: 'center',
+        flex: 1, display: 'flex', flexDirection: 'column',
+        justifyContent: 'center', alignItems: 'center',
+        padding: '60px 40px', width: '100%', boxSizing: 'border-box',
       }}>
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '14px', marginBottom: '12px' }}>
-          <Icon name={icons.wave} size={40} color={theme.colors.accent} />
-          <h1 style={{
-            fontSize: '44px', fontWeight: 800, color: theme.colors.textPrimary,
-            margin: 0, letterSpacing: '-0.02em',
-          }}>
-            Chào mừng đến Ghost TV
-          </h1>
+        <div style={{
+          width: '100%', maxWidth: '1200px',
+          marginBottom: '48px',
+          textAlign: 'center',
+          display: 'flex', flexDirection: 'column', alignItems: 'center',
+        }}>
+          <img 
+            src="/favicon.svg"
+            alt="Ghost TV Logo"
+            style={{ 
+              width: '84px', 
+              height: '84px', 
+              objectFit: 'contain', 
+              marginBottom: '24px',
+              display: 'block',
+              filter: 'drop-shadow(0 8px 16px rgba(56, 189, 248, 0.2))'
+            }} 
+          />
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '14px', marginBottom: '12px' }}>
+            <Icon name={icons.wave} size={40} color={theme.colors.accent} />
+            <h1 style={{
+              fontSize: '44px', fontWeight: 800, color: theme.colors.textPrimary,
+              margin: 0, letterSpacing: '-0.02em',
+            }}>
+              Chào mừng đến Ghost TV
+            </h1>
+          </div>
+          <p style={{ fontSize: '18px', color: theme.colors.textMuted, margin: 0 }}>
+            Hệ sinh thái giải trí đa nền tảng — chọn ứng dụng để bắt đầu.
+          </p>
         </div>
-        <p style={{ fontSize: '18px', color: theme.colors.textMuted, margin: 0 }}>
-          Hệ sinh thái giải trí đa nền tảng — chọn ứng dụng để bắt đầu.
-        </p>
-      </div>
 
-      <div style={{ display: 'flex', gap: '32px', flexWrap: 'wrap', justifyContent: 'center', maxWidth: '1200px' }}>
-        <HomeMenuCard
-          title="Xem Phim Hub"
-          subtitle="Kho phim tổng hợp, thể loại, quốc gia & phát video trực tuyến"
-          iconName={icons.film}
-          path="/movies"
-          accentColor={theme.colors.accent}
-        />
-        <HomeMenuCard
-          title="Cài Đặt Hệ Thống"
-          subtitle="Trung tâm tùy chỉnh giao diện và cấu hình"
-          iconName={icons.settings}
-          path="/"
-          badge="Sắp ra mắt"
-          accentColor={theme.colors.warning}
-        />
+        <div style={{ display: 'flex', gap: '32px', flexWrap: 'wrap', justifyContent: 'center', maxWidth: '1200px' }}>
+          <HomeMenuCard
+            title="Xem Phim Hub"
+            subtitle="Kho phim tổng hợp, thể loại, quốc gia & phát video trực tuyến"
+            iconName={icons.film}
+            path="/movies"
+            accentColor={theme.colors.accent}
+          />
+          <HomeMenuCard
+            title="Cài Đặt Hệ Thống"
+            subtitle="Trung tâm tùy chỉnh giao diện và cấu hình"
+            iconName={icons.settings}
+            path="/"
+            badge="Sắp ra mắt"
+            accentColor={theme.colors.warning}
+          />
+        </div>
       </div>
+      <Footer />
     </div>
   );
 }

@@ -1,6 +1,7 @@
 import { Outlet } from 'react-router-dom';
 import { TVSidebar } from '../components/TVSidebar';
 import { PageTransition } from '../components/PageTransition';
+import { Footer } from '../components/Footer';
 import { theme } from '../styles/theme';
 
 export function MovieLayout() {
@@ -20,13 +21,17 @@ export function MovieLayout() {
         marginLeft: theme.sidebar.width,
         width: `calc(100vw - ${theme.sidebar.width})`,
         height: '100vh',
-        padding: '36px 48px',
+        display: 'flex',
+        flexDirection: 'column',
         overflowY: 'auto',
         boxSizing: 'border-box',
       }}>
-        <PageTransition className="page-enter-fast">
-          <Outlet />
-        </PageTransition>
+        <div style={{ padding: '36px 48px 0', flex: '1 0 auto' }}>
+          <PageTransition className="page-enter-fast">
+            <Outlet />
+          </PageTransition>
+        </div>
+        <Footer />
       </div>
     </div>
   );
