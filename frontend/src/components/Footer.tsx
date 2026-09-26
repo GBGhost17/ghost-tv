@@ -1,5 +1,4 @@
 import { Link } from 'react-router-dom';
-import { Icon, icons } from './Icon';
 import { theme } from '../styles/theme';
 
 export function Footer() {
@@ -30,7 +29,17 @@ export function Footer() {
           {/* Brand Info */}
           <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', maxWidth: '380px' }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-              <Icon name={icons.logo} size={28} color={theme.colors.accent} />
+              <img 
+                src="/favicon.svg"
+                alt="Ghost TV Logo"
+                style={{ 
+                  width: '42px', 
+                  height: '42px', 
+                  objectFit: 'contain', 
+                  display: 'block',
+                  filter: 'drop-shadow(0 8px 16px rgba(56, 189, 248, 0.2))'
+                }} 
+              />
               <span style={{ fontSize: '20px', fontWeight: 800, color: theme.colors.textPrimary, letterSpacing: '0.5px' }}>
                 GHOST TV
               </span>
@@ -53,7 +62,6 @@ export function Footer() {
               <span style={{ fontSize: '15px', fontWeight: 700, color: theme.colors.textPrimary }}>Danh mục</span>
               <Link to="/movies/genres" style={{ color: theme.colors.textSecondary, textDecoration: 'none', fontSize: '14px', transition: 'color 0.2s' }}>Thể loại</Link>
               <Link to="/movies/countries" style={{ color: theme.colors.textSecondary, textDecoration: 'none', fontSize: '14px', transition: 'color 0.2s' }}>Quốc gia</Link>
-              <Link to="/movies/search" style={{ color: theme.colors.textSecondary, textDecoration: 'none', fontSize: '14px', transition: 'color 0.2s' }}>Tìm kiếm</Link>
             </div>
           </div>
         </div>
