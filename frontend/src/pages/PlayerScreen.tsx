@@ -89,6 +89,13 @@ function MetaBadge({ label, value, color }: { label?: string; value: string; col
   );
 }
 
+function formatAutoplayUrl(url: string): string {
+  if (!url) return '';
+  if (url.includes('autoplay=')) return url;
+  const separator = url.includes('?') ? '&' : '?';
+  return `${url}${separator}autoplay=1`;
+}
+
 type SafeEpisode = EpisodeItem & { link_embed?: string; link_m3u8?: string };
 
 export function PlayerScreen() {
@@ -103,7 +110,9 @@ export function PlayerScreen() {
   const [isMobile, setIsMobile] = useState(() => typeof window !== 'undefined' ? window.innerWidth < 768 : false);
 
   const episodesScrollRef = useDraggableScroll<HTMLDivElement>();
-  const handleGoBack = useCallback(() => navigate(-1), [navigate]);
+  const handleGoBack = useCallback(() => {
+    navigate('/movies');
+  }, [navigate]);
 
   useEffect(() => {
     const handleResize = () => setIsMobile(window.innerWidth < 768);
@@ -259,7 +268,7 @@ export function PlayerScreen() {
       {/* Pure 16:9 Widescreen Video Player Container */}
       <div style={{
         width: '100%',
-        maxWidth: '1280px',
+        maxWidth: isMobile ? '100%' : '860px',
         aspectRatio: '16 / 9',
         flexShrink: 0,
         backgroundColor: '#000',
@@ -272,9 +281,11 @@ export function PlayerScreen() {
       }}>
         {videoUrl ? (
           <iframe
-            src={videoUrl}
+            key={videoUrl}
+            src={formatAutoplayUrl(videoUrl)}
             title={`Tập ${currentEpisode?.name || ''}`}
             style={{ width: '100%', height: '100%', border: 'none' }}
+            allow="autoplay; fullscreen; picture-in-picture; accelerometer; encrypted-media; gyroscope"
             allowFullScreen
           />
         ) : (

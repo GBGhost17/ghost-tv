@@ -5,7 +5,6 @@ import axios from 'axios';
 const CONTENT_API_URL = import.meta.env.VITE_CONTENT_API_URL || 'https://phim.nguonc.com/api';
 const RAW_INTERNAL_URL = import.meta.env.VITE_INTERNAL_API_URL;
 
-// On Production (Vercel) without explicit internal backend, default directly to CONTENT_API_URL to prevent 15s timeout delays
 const INTERNAL_API_URL = RAW_INTERNAL_URL && RAW_INTERNAL_URL.trim() !== ''
   ? RAW_INTERNAL_URL
   : (import.meta.env.DEV ? 'http://localhost:8000/api' : CONTENT_API_URL);
@@ -78,8 +77,54 @@ export const OFFICIAL_COUNTRIES: CategoryItem[] = [
   { name: "Quốc gia khác", slug: "quoc-gia-khac" }
 ];
 
+// Regex to detect 18+ / adult movies
+const IS_18_PLUS_REGEX = /phim-18|18\+|18plus|phim-nguoi-lon|phim18|18-plus|adult/i;
+
+/**
+ * Filter helper to check if a movie item or detail belongs to 18+ genre
+ */
+export function is18PlusMovie(movie: any): boolean {
+  if (!movie) return false;
+
+  if (movie.slug && IS_18_PLUS_REGEX.test(movie.slug)) return true;
+  if (movie.name && IS_18_PLUS_REGEX.test(movie.name)) return true;
+
+  if (movie.category && typeof movie.category === 'object') {
+    const categories = Object.values(movie.category);
+    for (const catGroup of categories as any[]) {
+      if (catGroup?.list && Array.isArray(catGroup.list)) {
+        for (const item of catGroup.list) {
+          if (item.slug && IS_18_PLUS_REGEX.test(item.slug)) return true;
+          if (item.name && IS_18_PLUS_REGEX.test(item.name)) return true;
+        }
+      }
+    }
+  }
+
+  return false;
+}
+
+/**
+ * Filter list of movies, removing any 18+ items
+ */
+export function filter18PlusMovies<T extends { slug?: string; name?: string }>(items: T[] = []): T[] {
+  if (!Array.isArray(items)) return [];
+  return items.filter((item) => !is18PlusMovie(item));
+}
+
 // Response Cache for API calls
 const responseCache: { [key: string]: any } = {};
+
+function sanitizeApiResponse(data: any): any {
+  if (!data) return data;
+  if (Array.isArray(data.items)) {
+    return {
+      ...data,
+      items: filter18PlusMovies(data.items),
+    };
+  }
+  return data;
+}
 
 export const fetchMovies = async (page: number = 1) => {
   const cacheKey = `movies_page_${page}`;
@@ -92,8 +137,9 @@ export const fetchMovies = async (page: number = 1) => {
   if (isCustomBackend) {
     try {
       const response = await internalApi.get(`/movies?page=${page}`);
-      responseCache[cacheKey] = response.data;
-      return response.data;
+      const cleanData = sanitizeApiResponse(response.data);
+      responseCache[cacheKey] = cleanData;
+      return cleanData;
     } catch (err) {
       console.warn('Lỗi gọi internalApi /movies, fallback sang contentApi:', err);
     }
@@ -101,8 +147,9 @@ export const fetchMovies = async (page: number = 1) => {
 
   try {
     const directRes = await contentApi.get(`/films/phim-moi-cap-nhat?page=${page}`);
-    responseCache[cacheKey] = directRes.data;
-    return directRes.data;
+    const cleanData = sanitizeApiResponse(directRes.data);
+    responseCache[cacheKey] = cleanData;
+    return cleanData;
   } catch (err) {
     console.error('Lỗi gọi contentApi /films/phim-moi-cap-nhat:', err);
     return { items: [] };
@@ -117,8 +164,9 @@ export const fetchSingleMovies = async (page: number = 1) => {
 
   try {
     const response = await contentApi.get(`/films/danh-sach/phim-le?page=${page}`);
-    responseCache[cacheKey] = response.data;
-    return response.data;
+    const cleanData = sanitizeApiResponse(response.data);
+    responseCache[cacheKey] = cleanData;
+    return cleanData;
   } catch (err) {
     console.error('Lỗi gọi contentApi phim-le:', err);
     return { items: [] };
@@ -133,8 +181,9 @@ export const fetchSeriesMovies = async (page: number = 1) => {
 
   try {
     const response = await contentApi.get(`/films/danh-sach/phim-bo?page=${page}`);
-    responseCache[cacheKey] = response.data;
-    return response.data;
+    const cleanData = sanitizeApiResponse(response.data);
+    responseCache[cacheKey] = cleanData;
+    return cleanData;
   } catch (err) {
     console.error('Lỗi gọi contentApi phim-bo:', err);
     return { items: [] };
@@ -152,8 +201,9 @@ export const fetchMoviesByYear = async (year: string, page: number = 1) => {
   if (isCustomBackend) {
     try {
       const response = await internalApi.get(`/movies/year/${year}?page=${page}`);
-      responseCache[cacheKey] = response.data;
-      return response.data;
+      const cleanData = sanitizeApiResponse(response.data);
+      responseCache[cacheKey] = cleanData;
+      return cleanData;
     } catch (err) {
       console.warn(`Lỗi gọi internalApi year [${year}], fallback sang contentApi:`, err);
     }
@@ -161,8 +211,9 @@ export const fetchMoviesByYear = async (year: string, page: number = 1) => {
 
   try {
     const directRes = await contentApi.get(`/films/nam-phat-hanh/${year}?page=${page}`);
-    responseCache[cacheKey] = directRes.data;
-    return directRes.data;
+    const cleanData = sanitizeApiResponse(directRes.data);
+    responseCache[cacheKey] = cleanData;
+    return cleanData;
   } catch (err) {
     console.error(`Lỗi gọi contentApi year [${year}]:`, err);
     return { items: [] };
@@ -170,6 +221,11 @@ export const fetchMoviesByYear = async (year: string, page: number = 1) => {
 };
 
 export const fetchMoviesByCategory = async (type: 'genre' | 'country', slug: string, page: number = 1, year?: string) => {
+  // Completely block fetching if slug is 18+
+  if (type === 'genre' && IS_18_PLUS_REGEX.test(slug)) {
+    return { items: [] };
+  }
+
   if (year && year !== 'all') {
     return fetchMoviesByYear(year, page);
   }
@@ -183,8 +239,9 @@ export const fetchMoviesByCategory = async (type: 'genre' | 'country', slug: str
   if (isCustomBackend) {
     try {
       const response = await internalApi.get(`/movies/${type}/${slug}?page=${page}`);
-      responseCache[cacheKey] = response.data;
-      return response.data;
+      const cleanData = sanitizeApiResponse(response.data);
+      responseCache[cacheKey] = cleanData;
+      return cleanData;
     } catch (err) {
       console.warn(`Lỗi gọi internalApi ${type} [${slug}], fallback sang contentApi:`, err);
     }
@@ -193,8 +250,9 @@ export const fetchMoviesByCategory = async (type: 'genre' | 'country', slug: str
   try {
     const endpoint = type === 'genre' ? 'the-loai' : 'quoc-gia';
     const directRes = await contentApi.get(`/films/${endpoint}/${slug}?page=${page}`);
-    responseCache[cacheKey] = directRes.data;
-    return directRes.data;
+    const cleanData = sanitizeApiResponse(directRes.data);
+    responseCache[cacheKey] = cleanData;
+    return cleanData;
   } catch (err) {
     console.error(`Lỗi gọi contentApi ${type} [${slug}]:`, err);
     return { items: [] };
@@ -206,7 +264,7 @@ export const searchMovies = async (keyword: string) => {
 
   try {
     const response = await contentApi.get(`/films/search?keyword=${encodeURIComponent(keyword)}`);
-    return response.data;
+    return sanitizeApiResponse(response.data);
   } catch (err) {
     console.error('Lỗi gọi contentApi search:', err);
     return { items: [] };
@@ -249,9 +307,20 @@ export interface MovieDetailData {
 }
 
 export const fetchMovieDetail = async (slug: string) => {
+  if (IS_18_PLUS_REGEX.test(slug)) {
+    return null;
+  }
   try {
     const response = await contentApi.get(`/film/${slug}`);
-    return response.data;
+    const data = response.data;
+
+    // Check if returned movie is 18+ content
+    const movieData = data?.movie || data?.item || data?.data?.item || data?.data?.movie;
+    if (movieData && is18PlusMovie(movieData)) {
+      return null;
+    }
+
+    return data;
   } catch (error) {
     console.error("Lỗi lấy chi tiết phim:", error);
     return null;

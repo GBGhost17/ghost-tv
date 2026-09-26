@@ -9,6 +9,7 @@ import { SingleMoviesTab } from './pages/tabs/SingleMoviesTab';
 import { SeriesMoviesTab } from './pages/tabs/SeriesMoviesTab';
 import { CategoryDetailScreen } from './pages/CategoryDetailScreen';
 import { PlayerScreen } from './pages/PlayerScreen';
+import { Analytics } from '@vercel/analytics/react';
 
 function AnimatedRoutes() {
   const location = useLocation();
@@ -31,5 +32,10 @@ function AnimatedRoutes() {
 }
 
 export default function App() {
-  return <AnimatedRoutes />;
+  return (
+    <>
+      <AnimatedRoutes />
+      <Analytics />
+    </>
+  )
 }

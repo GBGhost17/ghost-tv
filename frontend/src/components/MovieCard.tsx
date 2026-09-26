@@ -57,14 +57,7 @@ export function MovieCard({ title, thumbUrl, onEnter, style, className }: MovieC
       </div>
       <div
         style={{
-          padding: '8px 10px',
-          fontSize: '13px',
-          fontWeight: 600,
-          textAlign: 'center',
-          color: theme.colors.textPrimary,
-          whiteSpace: 'nowrap',
-          overflow: 'hidden',
-          textOverflow: 'ellipsis',
+          padding: '6px 8px',
           backgroundColor: isHovered ? theme.colors.bgSecondary : theme.colors.bgElevated,
           transition: `background-color ${theme.transition.normal}`,
           flex: 1,
@@ -73,9 +66,28 @@ export function MovieCard({ title, thumbUrl, onEnter, style, className }: MovieC
           justifyContent: 'center',
           width: '100%',
           boxSizing: 'border-box',
+          overflow: 'hidden',
         }}
       >
-        {title}
+        <span
+          title={title}
+          style={{
+            fontSize: '12.5px',
+            fontWeight: 600,
+            textAlign: 'center',
+            color: theme.colors.textPrimary,
+            display: '-webkit-box',
+            WebkitLineClamp: 2,
+            WebkitBoxOrient: 'vertical',
+            overflow: 'hidden',
+            textOverflow: 'ellipsis',
+            wordBreak: 'break-word',
+            lineHeight: 1.3,
+            maxHeight: '2.6em',
+          }}
+        >
+          {title}
+        </span>
       </div>
     </div>
   );

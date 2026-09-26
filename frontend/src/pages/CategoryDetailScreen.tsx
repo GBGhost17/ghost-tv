@@ -13,7 +13,7 @@ export function CategoryDetailScreen() {
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
 
-  const categoryName = searchParams.get('name') || slug;
+  const categoryName = searchParams.get('name') || slug || '';
 
   const [year, setYear] = useState<string>('all');
   const [movies, setMovies] = useState<MovieItem[]>([]);
@@ -61,7 +61,7 @@ export function CategoryDetailScreen() {
       }}
     >
       <PageHeader
-        title={`Khám phá: ${categoryName}`}
+        title={categoryName}
         onBack={handleGoBack}
         showGreeting={false}
         showYearFilter={true}

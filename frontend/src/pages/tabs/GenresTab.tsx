@@ -1,120 +1,124 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { OFFICIAL_GENRES, fetchMoviesByCategory } from '../../services/api';
-import type { MovieItem } from '../../services/api';
-import { MovieCard } from '../../components/MovieCard';
+import { OFFICIAL_GENRES } from '../../services/api';
+import type { CategoryItem } from '../../services/api';
 import { Icon, icons } from '../../components/Icon';
 import { PageHeader } from '../../components/ui/PageHeader';
-import { LoadingSpinner } from '../../components/ui/LoadingSpinner';
 import { theme } from '../../styles/theme';
 
-import { useDraggableScroll } from '../../hooks/useDraggableScroll';
+const GENRE_ICONS: { [slug: string]: string } = {
+  'hanh-dong': 'mdi:sword-cross',
+  'phieu-luu': 'mdi:compass-outline',
+  'hoat-hinh': 'mdi:sparkles',
+  'phim-hai': 'mdi:emoticon-lol-outline',
+  'hinh-su': 'mdi:police-badge-outline',
+  'tai-lieu': 'mdi:video-vintage',
+  'chinh-kich': 'mdi:drama-masks',
+  'gia-dinh': 'mdi:home-heart',
+  'gia-tuong': 'mdi:wand',
+  'lich-su': 'mdi:pillar',
+  'kinh-di': 'mdi:ghost-outline',
+  'phim-nhac': 'mdi:music',
+  'bi-an': 'mdi:incognito',
+  'lang-man': 'mdi:heart-outline',
+  'khoa-hoc-vien-tuong': 'mdi:rocket-launch-outline',
+  'gay-can': 'mdi:lightning-bolt-outline',
+  'chien-tranh': 'mdi:shield-cross',
+  'tam-ly': 'mdi:brain',
+  'tinh-cam': 'mdi:cards-heart',
+  'co-trang': 'mdi:castle',
+  'mien-tay': 'mdi:hat-fedora',
+};
 
-let globalGenreCache: { [slug: string]: MovieItem[] } = {};
-export function clearGenreCache() { globalGenreCache = {}; }
-
-function ViewAllButton({ label, onEnter }: { label: string; onEnter: () => void }) {
+function GenreBox({ genre }: { genre: CategoryItem }) {
+  const navigate = useNavigate();
   const [isHovered, setIsHovered] = useState(false);
+  const iconName = GENRE_ICONS[genre.slug] || icons.genres;
+
+  const handleClick = () => {
+    navigate(`/movies/category/genre/${genre.slug}?name=${encodeURIComponent(genre.name)}`);
+  };
 
   return (
     <div
-      className="horizontal-card-item"
-      onClick={onEnter}
+      onClick={handleClick}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
       style={{
-        aspectRatio: '210 / 310',
-        border: '2px dashed',
-        borderColor: isHovered ? theme.colors.accent : theme.colors.borderLight,
-        borderRadius: theme.radius.md,
-        display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: '12px',
+        padding: '24px 18px',
+        borderRadius: theme.radius.xl,
+        backgroundColor: isHovered ? theme.colors.bgHover : theme.colors.bgPrimary,
+        border: '2px solid',
+        borderColor: isHovered ? theme.colors.accent : theme.colors.border,
+        color: isHovered ? theme.colors.accent : theme.colors.textPrimary,
         cursor: 'pointer',
-        color: isHovered ? theme.colors.textPrimary : theme.colors.textSecondary,
-        transition: `all ${theme.transition.smooth}`,
-        transform: isHovered ? 'translateY(-6px)' : 'translateY(0)',
-        boxShadow: isHovered ? theme.shadow.md : 'none',
-        backgroundColor: isHovered ? theme.colors.bgHover : theme.colors.bgSecondary,
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        justifyContent: 'center',
+        gap: '12px',
+        transition: `all ${theme.transition.normal}`,
+        transform: isHovered ? 'translateY(-4px) scale(1.02)' : 'translateY(0) scale(1)',
+        boxShadow: isHovered ? theme.shadow.lg : theme.shadow.sm,
+        userSelect: 'none',
+        minHeight: '120px',
         boxSizing: 'border-box',
-        padding: '12px',
       }}
     >
-      <Icon name={icons.forward} size={28} color={isHovered ? theme.colors.accent : theme.colors.textSecondary} />
-      <span style={{ fontSize: '13px', fontWeight: 600, textAlign: 'center', lineHeight: 1.4 }}>
-        Xem tất cả<br />{label}
+      <div style={{
+        width: '48px',
+        height: '48px',
+        borderRadius: '14px',
+        backgroundColor: isHovered ? `${theme.colors.accent}25` : theme.colors.bgSecondary,
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        transition: `background-color ${theme.transition.normal}`,
+      }}>
+        <Icon
+          name={iconName}
+          size={28}
+          color={isHovered ? theme.colors.accent : theme.colors.textSecondary}
+        />
+      </div>
+      <span style={{ fontSize: '15px', fontWeight: 700, textAlign: 'center' }}>
+        {genre.name}
       </span>
     </div>
   );
 }
 
-function GenreRow({ genre, movies }: { genre: { name: string; slug: string }; movies: MovieItem[] }) {
-  const scrollRef = useDraggableScroll<HTMLDivElement>();
-  const navigate = useNavigate();
-
-  return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
-      <h2 className="section-title section-title-accent">{genre.name}</h2>
-      <div ref={scrollRef} className="horizontal-scroll">
-        {movies.map((movie) => (
-          <div key={movie.id} className="horizontal-card-item">
-            <MovieCard
-              title={movie.name}
-              thumbUrl={movie.thumb_url}
-              onEnter={() => navigate(`/player/${movie.slug}`)}
-            />
-          </div>
-        ))}
-        <ViewAllButton
-          label={genre.name}
-          onEnter={() => navigate(`/movies/category/genre/${genre.slug}?name=${encodeURIComponent(genre.name)}`)}
-        />
-      </div>
-    </div>
-  );
-}
-
 export function GenresTab() {
-  const [genreData, setGenreData] = useState<{ [slug: string]: MovieItem[] }>(globalGenreCache);
-  const [loading, setLoading] = useState(Object.keys(globalGenreCache).length === 0);
-
-  useEffect(() => {
-    if (Object.keys(globalGenreCache).length > 0) { setLoading(false); return; }
-
-    let isMounted = true;
-    const loadData = async () => {
-      setLoading(true);
-      const results: { [slug: string]: MovieItem[] } = {};
-
-      for (let i = 0; i < OFFICIAL_GENRES.length; i += 3) {
-        const batch = OFFICIAL_GENRES.slice(i, i + 3);
-        await Promise.all(batch.map(async (g) => {
-          try {
-            const res = await fetchMoviesByCategory('genre', g.slug, 1);
-            if (res?.items?.length) results[g.slug] = res.items.slice(0, 6);
-          } catch { /* skip failed genre */ }
-        }));
-        if (isMounted) setGenreData({ ...results });
-      }
-
-      if (isMounted) { globalGenreCache = results; setLoading(false); }
-    };
-    loadData();
-    return () => { isMounted = false; };
-  }, []);
-
   return (
-    <div style={{
-      display: 'flex', flexDirection: 'column', gap: '36px',
-      width: '100%', boxSizing: 'border-box',
-    }}>
-      <PageHeader icon={icons.genres} title="Thể loại" subtitle="Khám phá phim theo thể loại yêu thích." />
+    <div
+      className="page-enter-fast"
+      style={{
+        display: 'flex',
+        flexDirection: 'column',
+        gap: '28px',
+        width: '100%',
+        boxSizing: 'border-box',
+      }}
+    >
+      <PageHeader
+        icon={icons.genres}
+        title="Thể loại phim"
+        subtitle="Khám phá kho phim đa dạng với nhiều thể loại khác nhau"
+      />
 
-      {loading && Object.keys(genreData).length === 0 && <LoadingSpinner />}
-
-      {OFFICIAL_GENRES.map((genre) => {
-        const movies = genreData[genre.slug] || [];
-        if (movies.length === 0) return null;
-        return <GenreRow key={genre.slug} genre={genre} movies={movies} />;
-      })}
+      {/* Grid of Genre Boxes ONLY */}
+      <div
+        style={{
+          display: 'grid',
+          gridTemplateColumns: 'repeat(auto-fill, minmax(160px, 1fr))',
+          gap: '16px',
+          width: '100%',
+        }}
+      >
+        {OFFICIAL_GENRES.map((genre) => (
+          <GenreBox key={genre.slug} genre={genre} />
+        ))}
+      </div>
     </div>
   );
 }
