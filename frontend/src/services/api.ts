@@ -2,7 +2,7 @@
 import axios from 'axios';
 
 // Read configuration from environment variables (.env)
-const CONTENT_API_URL = import.meta.env.VITE_CONTENT_API_URL || 'https://phim.nguonc.com/api';
+const CONTENT_API_URL = import.meta.env.VITE_CONTENT_API_URL || '';
 const RAW_INTERNAL_URL = import.meta.env.VITE_INTERNAL_API_URL;
 
 const INTERNAL_API_URL = RAW_INTERNAL_URL && RAW_INTERNAL_URL.trim() !== ''

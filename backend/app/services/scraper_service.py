@@ -35,7 +35,8 @@ class ScraperService:
                 url = request.url
                 if "ping.gif" in url or "jwpltx.com" in url:
                     return
-                if url.startswith("https://raw.githubusercontent.com/") and ".mp4" in url:
+                raw_prefix = settings.RAW_VIDEO_URL_PREFIX
+                if raw_prefix and url.startswith(raw_prefix) and ".mp4" in url:
                     extracted_url = url
                 elif ".m3u8" in url:
                     extracted_url = url
