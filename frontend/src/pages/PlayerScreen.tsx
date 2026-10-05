@@ -144,7 +144,7 @@ export function PlayerScreen() {
                   const server = movieData.episodes[sIdx];
                   if (!server.items) continue;
 
-                  const epMatch = server.items.find((ep) => {
+                  const epMatch = server.items.find((ep: EpisodeItem) => {
                     const epName = String(ep.name || '').trim().toLowerCase();
                     const epSlug = String(ep.slug || '').trim().toLowerCase();
                     const epNum = epName.replace(/\D+/g, '');
