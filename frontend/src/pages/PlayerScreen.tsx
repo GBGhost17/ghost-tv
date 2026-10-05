@@ -1,4 +1,4 @@
-import { useEffect, useState, useCallback } from 'react';
+import { useEffect, useState, useCallback, useMemo } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { fetchMovieDetail } from '../services/api';
 import type { MovieDetailData, EpisodeItem } from '../services/api';
@@ -108,6 +108,7 @@ export function PlayerScreen() {
   const [loading, setLoading] = useState(true);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
   const [isMobile, setIsMobile] = useState(() => typeof window !== 'undefined' ? window.innerWidth < 768 : false);
+  const [sortOrder, setSortOrder] = useState<'desc' | 'asc'>('desc');
 
   const episodesScrollRef = useDraggableScroll<HTMLDivElement>();
   const handleGoBack = useCallback(() => {
@@ -185,6 +186,12 @@ export function PlayerScreen() {
   const activeServer = movie.episodes[selectedServerIndex];
   const safeEpisode = currentEpisode as SafeEpisode | null;
   const videoUrl = safeEpisode?.link_embed || safeEpisode?.embed || safeEpisode?.link_m3u8 || '';
+
+  const sortedEpisodes = useMemo(() => {
+    if (!activeServer?.items) return [];
+    const items = [...activeServer.items];
+    return sortOrder === 'desc' ? items.reverse() : items;
+  }, [activeServer, sortOrder]);
 
   // Extract categories from movie.category object
   const categoriesList: Array<{ groupName: string; items: string[] }> = [];
@@ -356,8 +363,56 @@ export function PlayerScreen() {
           ))}
         </div>
 
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
-          <span style={{ fontSize: isMobile ? '14px' : '16px', fontWeight: 700, color: theme.colors.textPrimary }}>Danh sách tập phim:</span>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+          {/* Header Row: Episode List Label & Sort Order Controls */}
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '10px', flexWrap: 'wrap' }}>
+            <span style={{ fontSize: isMobile ? '14px' : '16px', fontWeight: 700, color: theme.colors.textPrimary }}>
+              Danh sách tập phim ({activeServer?.items.length || 0} tập):
+            </span>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+              <button
+                type="button"
+                onClick={() => setSortOrder('asc')}
+                style={{
+                  display: 'inline-flex', alignItems: 'center', gap: '4px',
+                  padding: isMobile ? '4px 10px' : '6px 12px',
+                  borderRadius: theme.radius.sm,
+                  backgroundColor: sortOrder === 'asc' ? theme.colors.accent : theme.colors.bgElevated,
+                  color: sortOrder === 'asc' ? theme.colors.bgDeep : theme.colors.textSecondary,
+                  border: '1px solid',
+                  borderColor: sortOrder === 'asc' ? theme.colors.accent : theme.colors.border,
+                  cursor: 'pointer',
+                  fontWeight: 600,
+                  fontSize: isMobile ? '12px' : '13px',
+                  outline: 'none',
+                  transition: `all ${theme.transition.fast}`,
+                }}
+              >
+                ↑ Tăng dần
+              </button>
+              <button
+                type="button"
+                onClick={() => setSortOrder('desc')}
+                style={{
+                  display: 'inline-flex', alignItems: 'center', gap: '4px',
+                  padding: isMobile ? '4px 10px' : '6px 12px',
+                  borderRadius: theme.radius.sm,
+                  backgroundColor: sortOrder === 'desc' ? theme.colors.accent : theme.colors.bgElevated,
+                  color: sortOrder === 'desc' ? theme.colors.bgDeep : theme.colors.textSecondary,
+                  border: '1px solid',
+                  borderColor: sortOrder === 'desc' ? theme.colors.accent : theme.colors.border,
+                  cursor: 'pointer',
+                  fontWeight: 600,
+                  fontSize: isMobile ? '12px' : '13px',
+                  outline: 'none',
+                  transition: `all ${theme.transition.fast}`,
+                }}
+              >
+                ↓ Giảm dần
+              </button>
+            </div>
+          </div>
+
           <div
             ref={episodesScrollRef}
             style={{
@@ -369,7 +424,7 @@ export function PlayerScreen() {
               paddingRight: '4px',
             }}
           >
-            {activeServer?.items.map((ep) => (
+            {sortedEpisodes.map((ep) => (
               <EpisodeButton
                 key={ep.slug}
                 episode={ep}
