@@ -6,6 +6,7 @@ export interface WatchHistoryItem {
   slug: string;
   thumb_url: string;
   episode_name: string;
+  episode_slug?: string;
   timestamp: number;
 }
 
@@ -24,7 +25,13 @@ export function getHistory(): WatchHistoryItem[] {
   }
 }
 
-export function saveToHistory(movie: MovieDetailData, episodeName: string): void {
+export function getHistoryItemBySlug(slug: string): WatchHistoryItem | undefined {
+  if (!slug) return undefined;
+  const history = getHistory();
+  return history.find((item) => item.slug === slug || item.id === slug);
+}
+
+export function saveToHistory(movie: MovieDetailData, episodeName: string, episodeSlug?: string): void {
   if (!movie || !movie.slug) return;
 
   try {
@@ -42,6 +49,7 @@ export function saveToHistory(movie: MovieDetailData, episodeName: string): void
       slug: movie.slug,
       thumb_url: movie.thumb_url,
       episode_name: episodeName || '',
+      episode_slug: episodeSlug || '',
       timestamp: Date.now(),
     };
 
@@ -52,3 +60,4 @@ export function saveToHistory(movie: MovieDetailData, episodeName: string): void
     console.error('Lỗi khi lưu lịch sử xem vào localStorage:', error);
   }
 }
+

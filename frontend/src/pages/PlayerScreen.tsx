@@ -7,7 +7,7 @@ import { LoadingSpinner } from '../components/ui/LoadingSpinner';
 import { ActionButton } from '../components/ui/ActionButton';
 import { theme } from '../styles/theme';
 import { useDraggableScroll } from '../hooks/useDraggableScroll';
-import { saveToHistory } from '../services/history';
+import { saveToHistory, getHistoryItemBySlug } from '../services/history';
 import { Footer } from '../components/Footer';
 
 function ServerButton({ label, isSelected, onClick, isMobile }: { label: string; isSelected: boolean; onClick: () => void; isMobile?: boolean }) {
@@ -131,9 +131,47 @@ export function PlayerScreen() {
           if (movieData) {
             setMovie(movieData);
             if (movieData.episodes?.length) {
-              const firstServer = movieData.episodes[0];
-              if (firstServer.items?.length) {
-                setCurrentEpisode(firstServer.items[0]);
+              const savedHistory = getHistoryItemBySlug(movieData.slug) || getHistoryItemBySlug(movieData.id);
+              let matchedServerIdx = 0;
+              let matchedEpisode: EpisodeItem | null = null;
+
+              if (savedHistory) {
+                const savedEpName = String(savedHistory.episode_name || '').trim().toLowerCase();
+                const savedEpSlug = String(savedHistory.episode_slug || '').trim().toLowerCase();
+                const savedEpNum = savedEpName.replace(/\D+/g, '');
+
+                for (let sIdx = 0; sIdx < movieData.episodes.length; sIdx++) {
+                  const server = movieData.episodes[sIdx];
+                  if (!server.items) continue;
+
+                  const epMatch = server.items.find((ep) => {
+                    const epName = String(ep.name || '').trim().toLowerCase();
+                    const epSlug = String(ep.slug || '').trim().toLowerCase();
+                    const epNum = epName.replace(/\D+/g, '');
+
+                    if (savedEpSlug && epSlug === savedEpSlug) return true;
+                    if (savedEpName && epName === savedEpName) return true;
+                    if (savedEpNum && epNum && savedEpNum === epNum) return true;
+
+                    return false;
+                  });
+
+                  if (epMatch) {
+                    matchedServerIdx = sIdx;
+                    matchedEpisode = epMatch;
+                    break;
+                  }
+                }
+              }
+
+              if (!matchedEpisode) {
+                matchedServerIdx = 0;
+                matchedEpisode = movieData.episodes[0]?.items?.[0] || null;
+              }
+
+              setSelectedServerIndex(matchedServerIdx);
+              if (matchedEpisode) {
+                setCurrentEpisode(matchedEpisode);
               }
             }
             return;
@@ -148,7 +186,7 @@ export function PlayerScreen() {
   // Track watch history whenever movie or currentEpisode updates
   useEffect(() => {
     if (movie && currentEpisode) {
-      saveToHistory(movie, currentEpisode.name);
+      saveToHistory(movie, currentEpisode.name, currentEpisode.slug);
     }
   }, [movie, currentEpisode]);
 
