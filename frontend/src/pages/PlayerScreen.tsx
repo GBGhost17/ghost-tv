@@ -9,6 +9,7 @@ import { theme } from '../styles/theme';
 import { useDraggableScroll } from '../hooks/useDraggableScroll';
 import { saveToHistory, getHistoryItemBySlug } from '../services/history';
 import { Footer } from '../components/Footer';
+import { FavoriteButton } from '../components/ui/FavoriteButton';
 
 function ServerButton({ label, isSelected, onClick, isMobile }: { label: string; isSelected: boolean; onClick: () => void; isMobile?: boolean }) {
   const [isHovered, setIsHovered] = useState(false);
@@ -265,9 +266,12 @@ export function PlayerScreen() {
           >
             Trở về
           </ActionButton>
-          {currentEpisode && (
-            <MetaBadge value={`Đang phát: Tập ${currentEpisode.name}`} color={theme.colors.accent} />
-          )}
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+            <FavoriteButton movie={movie} variant="icon" size="sm" />
+            {currentEpisode && (
+              <MetaBadge value={`Đang phát: Tập ${currentEpisode.name}`} color={theme.colors.accent} />
+            )}
+          </div>
         </div>
       ) : (
         /* Desktop Top Bar: Title + Badges + Back Button */
@@ -300,8 +304,9 @@ export function PlayerScreen() {
             </div>
           </div>
 
-          {/* Quick Badges */}
-          <div style={{ display: 'flex', gap: '6px', flexWrap: 'wrap', alignItems: 'center' }}>
+          {/* Quick Badges & Favorite Button */}
+          <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap', alignItems: 'center' }}>
+            <FavoriteButton movie={movie} size="md" />
             {movie.quality && <MetaBadge value={movie.quality} color={theme.colors.accent} />}
             {movie.language && <MetaBadge value={movie.language} color={theme.colors.success} />}
             {movie.time && <MetaBadge value={movie.time} color={theme.colors.warning} />}

@@ -8,9 +8,11 @@ interface MovieCardProps {
   onEnter: () => void;
   style?: React.CSSProperties;
   className?: string;
+  onRemove?: () => void;
+  removeTitle?: string;
 }
 
-export function MovieCard({ title, thumbUrl, onEnter, style, className }: MovieCardProps) {
+export function MovieCard({ title, thumbUrl, onEnter, style, className, onRemove, removeTitle }: MovieCardProps) {
   const [isHovered, setIsHovered] = useState(false);
 
   return (
@@ -54,6 +56,47 @@ export function MovieCard({ title, thumbUrl, onEnter, style, className }: MovieC
         <div className="movie-card-overlay">
           <Icon name={icons.play} size={36} color={theme.colors.accent} />
         </div>
+        {onRemove && (
+          <button
+            type="button"
+            onClick={(e) => {
+              e.stopPropagation();
+              onRemove();
+            }}
+            title={removeTitle || 'Bỏ khỏi danh sách'}
+            aria-label={removeTitle || 'Bỏ khỏi danh sách'}
+            style={{
+              position: 'absolute',
+              top: '8px',
+              right: '8px',
+              zIndex: 10,
+              width: '32px',
+              height: '32px',
+              borderRadius: '50%',
+              backgroundColor: 'rgba(2, 6, 23, 0.8)',
+              backdropFilter: 'blur(4px)',
+              border: '1px solid rgba(244, 63, 94, 0.4)',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              cursor: 'pointer',
+              color: '#f43f5e',
+              transition: `all ${theme.transition.fast}`,
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.backgroundColor = '#f43f5e';
+              e.currentTarget.style.color = '#fff';
+              e.currentTarget.style.transform = 'scale(1.1)';
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.backgroundColor = 'rgba(2, 6, 23, 0.8)';
+              e.currentTarget.style.color = '#f43f5e';
+              e.currentTarget.style.transform = 'scale(1)';
+            }}
+          >
+            <Icon name={icons.trash} size={16} color="currentColor" />
+          </button>
+        )}
       </div>
       <div
         style={{

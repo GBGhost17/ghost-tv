@@ -3,6 +3,7 @@ import { HomeScreen } from './pages/HomeScreen';
 import { MovieLayout } from './pages/MovieLayout';
 import { HomeTab } from './pages/tabs/HomeTab';
 import { SearchTab } from './pages/tabs/SearchTab';
+import { FavoritesTab } from './pages/tabs/FavoritesTab';
 import { GenresTab } from './pages/tabs/GenresTab';
 import { CountriesTab } from './pages/tabs/CountriesTab';
 import { SingleMoviesTab } from './pages/tabs/SingleMoviesTab';
@@ -20,6 +21,7 @@ function AnimatedRoutes() {
       <Route path="/movies" element={<MovieLayout />}>
         <Route index element={<HomeTab />} />
         <Route path="search" element={<SearchTab />} />
+        <Route path="favorites" element={<FavoritesTab />} />
         <Route path="single" element={<SingleMoviesTab />} />
         <Route path="series" element={<SeriesMoviesTab />} />
         <Route path="genres" element={<GenresTab />} />

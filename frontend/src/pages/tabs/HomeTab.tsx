@@ -11,6 +11,7 @@ import { theme } from '../../styles/theme';
 
 import { useDraggableScroll } from '../../hooks/useDraggableScroll';
 import { getHistory } from '../../services/history';
+import { useFavorites } from '../../services/favorites';
 
 let globalHomeCache: { watching: MovieItem[]; news: MovieItem[]; catalog: MovieItem[] } | null = null;
 
@@ -48,6 +49,7 @@ export function HomeTab() {
   const [hasMore, setHasMore] = useState(true);
   const [loading, setLoading] = useState(!globalHomeCache);
   const navigate = useNavigate();
+  const { favorites } = useFavorites();
 
   useEffect(() => {
     // Read watch history from localStorage
@@ -130,6 +132,21 @@ export function HomeTab() {
           title="Phim đang xem"
           iconName={icons.play}
           movies={watchingMovies}
+          onSelectMovie={(slug) => navigate(`/player/${slug}`)}
+        />
+      )}
+
+      {favorites.length > 0 && (
+        <HorizontalMovieRow
+          title="Phim yêu thích"
+          iconName={icons.heart}
+          movies={favorites.slice(0, 15).map((f) => ({
+            id: f.id,
+            name: f.name,
+            slug: f.slug,
+            thumb_url: f.thumb_url,
+            current_episode: f.current_episode || '',
+          }))}
           onSelectMovie={(slug) => navigate(`/player/${slug}`)}
         />
       )}

@@ -63,6 +63,7 @@ function MenuItem({ label, iconName, path, onSelect }: MenuItemProps) {
 
 const menuItems = [
   { label: 'Trang chủ', iconName: icons.home, path: '/movies' },
+  { label: 'Yêu thích', iconName: icons.heart, path: '/movies/favorites' },
   { label: 'Thể loại', iconName: icons.genres, path: '/movies/genres' },
   { label: 'Phim Lẻ', iconName: icons.movie, path: '/movies/single' },
   { label: 'Phim Bộ', iconName: icons.series, path: '/movies/series' },

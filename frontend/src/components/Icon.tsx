@@ -53,4 +53,7 @@ export const icons = {
   logo: 'mdi:television-play',
   menu: 'mdi:menu',
   close: 'mdi:close',
+  heart: 'mdi:heart',
+  heartOutline: 'mdi:heart-outline',
+  trash: 'mdi:trash-can-outline',
 } as const;

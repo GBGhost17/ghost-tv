@@ -54,6 +54,7 @@ export function Footer() {
             <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
               <span style={{ fontSize: '15px', fontWeight: 700, color: theme.colors.textPrimary }}>Khám phá</span>
               <Link to="/movies" style={{ color: theme.colors.textSecondary, textDecoration: 'none', fontSize: '14px', transition: 'color 0.2s' }}>Trang chủ</Link>
+              <Link to="/movies/favorites" style={{ color: theme.colors.textSecondary, textDecoration: 'none', fontSize: '14px', transition: 'color 0.2s' }}>Phim Yêu Thích</Link>
               <Link to="/movies/single" style={{ color: theme.colors.textSecondary, textDecoration: 'none', fontSize: '14px', transition: 'color 0.2s' }}>Phim Lẻ</Link>
               <Link to="/movies/series" style={{ color: theme.colors.textSecondary, textDecoration: 'none', fontSize: '14px', transition: 'color 0.2s' }}>Phim Bộ</Link>
             </div>
