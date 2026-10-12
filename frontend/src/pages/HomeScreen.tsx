@@ -139,13 +139,6 @@ export function HomeScreen() {
             accentColor={theme.colors.accent}
           />
           <HomeMenuCard
-            title="Phim Yêu Thích"
-            subtitle="Bộ sưu tập những thước phim ấn tượng bạn đã lưu trữ"
-            iconName={icons.heart}
-            path="/movies/favorites"
-            accentColor="#f43f5e"
-          />
-          <HomeMenuCard
             title="Cài Đặt Hệ Thống"
             subtitle="Trung tâm tùy chỉnh giao diện và cấu hình"
             iconName={icons.settings}
